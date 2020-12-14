@@ -19,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
         email_login_button.setOnClickListener { signinAndSignup() }
 
     }
-
+//
     fun signinAndSignup(){
         auth?.createUserWithEmailAndPassword(
             email_editText.text.toString(), password_editText.text.toString())
