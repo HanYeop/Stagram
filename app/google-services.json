@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "767185056190",
+    "project_id": "stagram-bd617",
+    "storage_bucket": "stagram-bd617.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767185056190:android:53995b0d820252f985c9ef",
+        "android_client_info": {
+          "package_name": "org.techtown.stagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767185056190-slmtr34i6cvrmdacfd621n2bm37ak4it.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpCmJJm3eeSJUGraGDPOkKS8f5P48NRlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767185056190-slmtr34i6cvrmdacfd621n2bm37ak4it.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
