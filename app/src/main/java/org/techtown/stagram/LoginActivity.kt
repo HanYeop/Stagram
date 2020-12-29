@@ -51,10 +51,6 @@ class LoginActivity : AppCompatActivity() {
             if(result.isSuccess) {
                 var accout = result.signInAccount
                 firebaseAuthWithGoogle(accout)
-                Toast.makeText(this,"로그인 성공",Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this,"로그인 실패",Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -67,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
                 if(task.isSuccessful){
                     // 아이디, 비밀번호 맞을 때
                     moveMainPage(task.result?.user)
+                    Toast.makeText(this,"로그인 성공",Toast.LENGTH_SHORT).show()
                 }else{
                     // 틀렸을 때
                     Toast.makeText(this,task.exception?.message,Toast.LENGTH_SHORT).show()
@@ -76,24 +73,24 @@ class LoginActivity : AppCompatActivity() {
 
     fun signinAndSignup(){
         auth?.createUserWithEmailAndPassword(
-            email_editText.text.toString(), password_editText.text.toString())
-            ?.addOnCompleteListener{
+                email_editText.text.toString(), password_editText.text.toString())
+        ?.addOnCompleteListener{
                 task ->
-                    if(task.isSuccessful){
-                        // 아이디 생성 되었을 때
-                        moveMainPage(task.result?.user)
-                    }else if(task.exception?.message.isNullOrEmpty()){
-                        // 로그인 에러 발생
-                        Toast.makeText(this,task.exception?.message,Toast.LENGTH_SHORT).show()
-                    }else{
-                        // 둘다 아님
-                        signinEmail()
-                    }
+            if(task.isSuccessful){
+                // 아이디 생성 되었을 때
+                moveMainPage(task.result?.user)
+            }else if(task.exception?.message.isNullOrEmpty()){
+                // 아이디 생성 에러 발생
+                Toast.makeText(this,task.exception?.message,Toast.LENGTH_SHORT).show()
+            }else{
+                // 둘다 아님
+                signinEmail()
             }
+        }
     }
 
     fun signinEmail(){
-        auth?.createUserWithEmailAndPassword(
+        auth?.signInWithEmailAndPassword(
             email_editText.text.toString(), password_editText.text.toString())
             ?.addOnCompleteListener{
                     task ->
