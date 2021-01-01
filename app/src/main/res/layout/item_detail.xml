@@ -16,7 +16,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_margin="7.5dp"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:src="@drawable/ic_account"/>
         <TextView
             android:id="@+id/detailviewitem_profile_textView"
             android:layout_width="wrap_content"
