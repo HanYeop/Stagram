@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -16,6 +17,8 @@ import java.util.jar.Manifest
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var detailViewFragment = DetailViewFragment()
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        setToolbarDefault()
+
         when(item.itemId){
             R.id.home ->{
                 supportFragmentManager.beginTransaction().replace(R.id.main_content,detailViewFragment).commit()
@@ -58,5 +61,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         supportFragmentManager.beginTransaction().replace(R.id.main_content,detailViewFragment).commit()
 
         ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),1)
+    }
+
+    // 툴바 기본 이미지 설정
+    fun setToolbarDefault(){
+        toolbar_username.visibility = View.GONE
+        toolbar_back_Button.visibility = View.GONE
+        top_image.visibility = View.VISIBLE
     }
 }

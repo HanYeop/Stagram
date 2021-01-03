@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 import org.techtown.stagram.R
@@ -40,6 +41,8 @@ class DetailViewFragment : Fragment(){
             firestore?.collection("images")?.orderBy("timestamp",Query.Direction.DESCENDING)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 contentDTOs.clear()
                 contentUidList.clear()
+                if(querySnapshot == null) return@addSnapshotListener
+
                 for(snapshot in querySnapshot!!.documents){
                     var item = snapshot.toObject(ContentDTO::class.java)
                     contentDTOs.add(item!!)
@@ -84,6 +87,17 @@ class DetailViewFragment : Fragment(){
                 favoriteEvent(position)
             }
 
+            // 계정 이미지 눌렀을 때 (프로필로 이동)
+            viewholder.detailviewitem_profile_image.setOnClickListener {
+                profilemove(position)
+            }
+
+            // 계정 이름 눌렀을 때 (프로필로 이동)
+            viewholder.detailviewitem_profile_textView.setOnClickListener {
+                profilemove(position)
+            }
+
+
             if(contentDTOs!![position].favorites.containsKey(uid)){
                  // 좋아요 버튼이 눌려 있을 때
                 viewholder.detailviewitem_favorite_imageView.setImageResource(R.drawable.ic_favorite)
@@ -92,6 +106,15 @@ class DetailViewFragment : Fragment(){
                  // 좋아요 버튼이 눌려 있지 않을 때
                 viewholder.detailviewitem_favorite_imageView.setImageResource(R.drawable.ic_favorite_border)
             }
+        }
+
+        fun profilemove(position: Int){
+            var fragment = UserFragment()
+            var bundle = Bundle()
+            bundle.putString("destinationUid",contentDTOs[position].uid)
+            bundle.putString("userId",contentDTOs[position].userId)
+            fragment.arguments = bundle
+            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
         }
 
         fun favoriteEvent(position : Int){

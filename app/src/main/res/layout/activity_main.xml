@@ -15,6 +15,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@color/colorWhite">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
             <ImageView
                 android:id="@+id/top_image"
                 android:layout_width="wrap_content"
@@ -24,9 +28,33 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/logo_top" />
+                android:src="@drawable/logo_top" />
 
+            <ImageView
+                android:id="@+id/toolbar_back_Button"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_arrow_back"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/toolbar_username"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Id"
+                android:textColor="@color/colorNavIcon"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/toolbar_back_Button"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
+
 
     <FrameLayout
         android:id="@+id/main_content"

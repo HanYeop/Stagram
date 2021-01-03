@@ -51,6 +51,12 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
     }
 
+    override fun onStart() {
+        super.onStart()
+        // 자동 로그인
+        moveMainPage(auth?.currentUser)
+    }
+
     fun googleLogin(){
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent,GOOGLE_LOGIN_CODE)
@@ -165,6 +171,7 @@ class LoginActivity : AppCompatActivity() {
     fun moveMainPage(user:FirebaseUser?){
         if( user!= null){
             startActivity(Intent(this,MainActivity::class.java))
+            finish()
         } // 유저정보 넘겨주고 메인 액티비티 호출
     }
 }
