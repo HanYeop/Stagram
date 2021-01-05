@@ -27,6 +27,9 @@ class UserFragment : Fragment(){
     var uid : String? = null
     var auth : FirebaseAuth? = null
     var currentUserUid : String? = null
+    companion object{
+        var PICK_PROFILE_FROM_ALBUM = 10
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         fragmentView = LayoutInflater.from(activity).inflate(R.layout.fragment_user,container,false)
@@ -60,13 +63,31 @@ class UserFragment : Fragment(){
 
         }
 
+        // 프로필 사진 클릭
+        fragmentView?.account_profile_imageView?.setOnClickListener {
+            var photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "image/*"
+            activity?.startActivityForResult(photoPickerIntent,PICK_PROFILE_FROM_ALBUM)
+        }
+
         // 어댑터 연결
         fragmentView?.account_recyclerView?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerView?.layoutManager = GridLayoutManager(activity!!,3)
 
+        getProfileImage()
         return fragmentView
     }
 
+    // 프로필 사진 이미지 불러오기
+    fun getProfileImage(){
+        firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+            if(documentSnapshot == null) return@addSnapshotListener
+            if(documentSnapshot.data != null){
+                var url = documentSnapshot?.data!!["image"]
+                Glide.with(activity!!).load(url).apply(RequestOptions().circleCrop()).into(fragmentView?.account_profile_imageView!!)
+            }
+        }
+    }
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
         init{
