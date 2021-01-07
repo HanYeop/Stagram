@@ -9,9 +9,10 @@ data class ContentDTO (
     var favoriteCount : Int = 0,
     var favorites : MutableMap<String, Boolean> = HashMap()){
 
-    // 버그 관리
     data class Comment(
+        var userId : String? = null,
         var uid : String? = null,
         var comment : String? = null,
-        var timestamp: Long? = null)
+        var timestamp: Long? = null) {
+    }
 }

@@ -1,6 +1,7 @@
 package org.techtown.stagram.navigation
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -114,7 +115,13 @@ class DetailViewFragment : Fragment(){
             viewholder.detailviewitem_profile_textView.setOnClickListener {
                 profilemove(position)
             }
-
+            
+            // 댓글 버튼 눌렀을 때
+            viewholder.detailviewitem_comment_imageView.setOnClickListener { view ->
+                var intent = Intent(view.context,CommentActivity::class.java)
+                intent.putExtra("contentUid",contentUidList[position])
+                startActivity(intent)
+            }
 
             if(contentDTOs!![position].favorites.containsKey(uid)){
                  // 좋아요 버튼이 눌려 있을 때
