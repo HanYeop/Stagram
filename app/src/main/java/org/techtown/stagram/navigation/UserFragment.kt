@@ -56,6 +56,13 @@ class UserFragment : Fragment(){
                 startActivity(Intent(activity,LoginActivity::class.java))
                 auth?.signOut()
             }
+
+            // 프로필 사진 클릭
+            fragmentView?.account_profile_imageView?.setOnClickListener {
+                var photoPickerIntent = Intent(Intent.ACTION_PICK)
+                photoPickerIntent.type = "image/*"
+                activity?.startActivityForResult(photoPickerIntent,PICK_PROFILE_FROM_ALBUM)
+            }
         }
         else{
             // 다른 유저 페이지
@@ -73,13 +80,6 @@ class UserFragment : Fragment(){
             fragmentView?.account_profile_button?.setOnClickListener {
                 requestFollow()
             }
-        }
-
-        // 프로필 사진 클릭
-        fragmentView?.account_profile_imageView?.setOnClickListener {
-            var photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            activity?.startActivityForResult(photoPickerIntent,PICK_PROFILE_FROM_ALBUM)
         }
 
         // 어댑터 연결
