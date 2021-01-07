@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -81,8 +82,23 @@ class DetailViewFragment : Fragment(){
             //Likes
             viewholder.detailviewitem_favoritecounter_textView.text = "Likes "+ contentDTOs!![position].favoriteCount
 
-//            //ProfileImage (추가 필요)
-//            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).into(viewholder.detailviewitem_profile_image)
+            //ProfileImage
+            firestore?.collection("profileImages")
+                ?.document(contentDTOs[position].uid!!)
+                ?.get()
+                ?.addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+
+                        var url = task.result?.get("image")
+
+                        if (url != null) {
+                            Glide.with(holder.itemView.context).load(url)
+                                .apply(RequestOptions().circleCrop())
+                                .into(viewholder.detailviewitem_profile_image)
+                        }
+
+                    }
+                }
 
             // 좋아요 버튼에 이벤트 추가
             viewholder.detailviewitem_favorite_imageView.setOnClickListener {
