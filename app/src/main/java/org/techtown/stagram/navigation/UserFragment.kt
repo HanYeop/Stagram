@@ -1,12 +1,16 @@
 package org.techtown.stagram.navigation
 
+import android.app.Application
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,12 +18,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.android.synthetic.main.activity_main.*
 import org.techtown.stagram.R
 import org.techtown.stagram.navigation.model.ContentDTO
 import kotlinx.android.synthetic.main.fragment_user.view.*
 import org.techtown.stagram.LoginActivity
 import org.techtown.stagram.MainActivity
+import org.techtown.stagram.navigation.model.FollowDTO
 
 class UserFragment : Fragment(){
     var fragmentView : View? = null
@@ -27,6 +33,9 @@ class UserFragment : Fragment(){
     var uid : String? = null
     var auth : FirebaseAuth? = null
     var currentUserUid : String? = null
+    var loadfollow : ListenerRegistration? = null
+    var loadprofileimage : ListenerRegistration? = null
+
     companion object{
         var PICK_PROFILE_FROM_ALBUM = 10
     }
@@ -61,6 +70,9 @@ class UserFragment : Fragment(){
             mainActivity?.toolbar_back_Button.visibility = View.VISIBLE
             mainActivity?.toolbar_username.visibility = View.VISIBLE
 
+            fragmentView?.account_profile_button?.setOnClickListener {
+                requestFollow()
+            }
         }
 
         // 프로필 사진 클릭
@@ -74,13 +86,36 @@ class UserFragment : Fragment(){
         fragmentView?.account_recyclerView?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerView?.layoutManager = GridLayoutManager(activity!!,3)
 
-        getProfileImage()
         return fragmentView
     }
 
-    // 프로필 사진 이미지 불러오기
-    fun getProfileImage(){
-        firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+    override fun onStart() {
+        super.onStart()
+
+        // 팔로우, 팔로워 수 불러오기
+        loadfollow = firestore?.collection("users")?.document(uid!!)?.addSnapshotListener{ documentSnapshot, firebaseFirestoreException ->
+            if(documentSnapshot == null) return@addSnapshotListener
+            var followDTO = documentSnapshot.toObject(FollowDTO::class.java)
+            if(followDTO?.followerCount != null){
+                fragmentView?.account_follower_count?.text = followDTO?.followerCount?.toString()
+            }
+            if(followDTO?.followingCount != null){
+                fragmentView?.account_following_count?.text = followDTO?.followingCount?.toString()
+                if(followDTO?.followers?.containsKey(currentUserUid!!)){
+                    fragmentView?.account_profile_button?.text = getString(R.string.follow_cancel)
+                    fragmentView?.account_profile_button?.background?.setColorFilter(ContextCompat.getColor(activity!!,R.color.colorLightGray),PorterDuff.Mode.MULTIPLY)
+                }
+                else{
+                    if(uid!= currentUserUid){
+                        fragmentView?.account_profile_button?.text = getString(R.string.follow)
+                        fragmentView?.account_profile_button?.background?.colorFilter = null
+                    }
+                }
+            }
+        }
+
+        // 프로필 사진 이미지 불러오기
+        loadprofileimage = firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
             if(documentSnapshot == null) return@addSnapshotListener
             if(documentSnapshot.data != null){
                 var url = documentSnapshot?.data!!["image"]
@@ -88,6 +123,70 @@ class UserFragment : Fragment(){
             }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        // 스냅샷 제거(오류 방지)
+        loadfollow?.remove()
+        loadprofileimage?.remove()
+    }
+
+
+    // 팔로우
+    fun requestFollow(){
+        var tsDocFollowing = firestore?.collection("users")?.document(currentUserUid!!)
+        firestore?.runTransaction{ transaction ->
+            var followDTO = transaction.get(tsDocFollowing!!).toObject(FollowDTO::class.java)
+            if (followDTO == null){
+                // 팔로우 정보가 없을 때 생성
+                followDTO = FollowDTO()
+                followDTO!!.followingCount = 1
+                followDTO!!.followings[uid!!] = true
+
+                transaction.set(tsDocFollowing,followDTO)
+                return@runTransaction
+            }
+
+            if(followDTO.followings.containsKey(uid)){
+                // 팔로우 하고 있는 경우 (취소)
+                followDTO?.followingCount = followDTO?.followingCount - 1
+                followDTO?.followings?.remove(uid)
+            }
+            else{
+                // 팔로우 하고 있지 않은 경우 (팔로우)
+                followDTO?.followingCount = followDTO?.followingCount + 1
+                followDTO?.followings[uid!!] = true
+            }
+            transaction.set(tsDocFollowing,followDTO)
+            return@runTransaction
+        }
+
+        var tsDocFollower = firestore?.collection("users")?.document(uid!!)
+        firestore?.runTransaction { transaction ->
+            var followDTO = transaction.get(tsDocFollower!!).toObject(FollowDTO::class.java)
+            if(followDTO == null){
+                followDTO = FollowDTO()
+                followDTO!!.followerCount = 1
+                followDTO!!.followers[currentUserUid!!] = true
+
+                transaction.set(tsDocFollower,followDTO!!)
+                return@runTransaction
+            }
+            if(followDTO!!.followers.containsKey(currentUserUid)){
+                // 팔로우 하고 있는 경우
+                followDTO!!.followerCount = followDTO!!.followerCount - 1
+                followDTO!!.followers.remove(currentUserUid)
+            }
+            else{
+                // 팔로우 하고 있지 않은 경우
+                followDTO!!.followerCount = followDTO!!.followerCount + 1
+                followDTO!!.followers[currentUserUid!!] = true
+            }
+            transaction.set(tsDocFollower,followDTO!!)
+            return@runTransaction
+        }
+    }
+
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
         init{
