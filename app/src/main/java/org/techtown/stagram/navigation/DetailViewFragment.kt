@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 import org.techtown.stagram.MainActivity
 import org.techtown.stagram.R
+import org.techtown.stagram.navigation.model.AlarmDTO
 import org.techtown.stagram.navigation.model.ContentDTO
 
 class DetailViewFragment : Fragment(){
@@ -120,6 +121,7 @@ class DetailViewFragment : Fragment(){
             viewholder.detailviewitem_comment_imageView.setOnClickListener { view ->
                 var intent = Intent(view.context,CommentActivity::class.java)
                 intent.putExtra("contentUid",contentUidList[position])
+                intent.putExtra("destinationUid",contentDTOs[position].uid)
                 startActivity(intent)
             }
 
@@ -157,9 +159,21 @@ class DetailViewFragment : Fragment(){
                     // 좋아요 버튼이 눌려 있지 않을 때 클릭 (좋아요)
                     contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
                     contentDTO?.favorites[uid!!] = true
+                    favoriteAlarm(contentDTOs[position].uid!!)
                 }
                 transaction.set(tsDoc,contentDTO)
             }
+        }
+
+        // 좋아요 알림
+        fun favoriteAlarm(destinationUid : String){
+            var alarmDTO = AlarmDTO()
+            alarmDTO.destinationUid = destinationUid
+            alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+            alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+            alarmDTO.kind = 0
+            alarmDTO.timestamp = System.currentTimeMillis()
+            FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
         }
     }
 }

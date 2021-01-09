@@ -23,7 +23,7 @@
         android:id="@+id/commentview_comment_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="UserID"
+        android:text="text"
         android:layout_margin="7.5dp"/>
 
 
