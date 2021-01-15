@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,19 +17,25 @@ import kotlinx.android.synthetic.main.fragment_grid.view.*
 import org.techtown.stagram.R
 import org.techtown.stagram.navigation.model.ContentDTO
 
+
 class GridFragment : Fragment(){
     var firestore : FirebaseFirestore? = null
     var fragmentView : View? = null
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         fragmentView = LayoutInflater.from(activity).inflate(R.layout.fragment_grid,container,false)
         firestore = FirebaseFirestore.getInstance()
+
         fragmentView?.gridfragment_RecyclerView?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.gridfragment_RecyclerView?.layoutManager = GridLayoutManager(activity,3)
+
         return fragmentView
     }
 
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
         var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
         init{
             firestore?.collection("images")?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -46,6 +53,7 @@ class GridFragment : Fragment(){
 
             var imageView = ImageView(parent.context)
             imageView.layoutParams = LinearLayoutCompat.LayoutParams(width,width)
+
             return CustomViewHolder(imageView)
         }
 
