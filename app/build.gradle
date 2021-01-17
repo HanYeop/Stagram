@@ -3,8 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 
-def Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     compileSdkVersion 30
@@ -16,8 +14,6 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
-        buildConfigField("String", "API_KEY", properties.getProperty("google.key"))
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

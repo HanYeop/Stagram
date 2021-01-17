@@ -1,5 +1,6 @@
 package org.techtown.stagram.navigation.util
 
+import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import okhttp3.MediaType
@@ -7,13 +8,14 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.techtown.stagram.BuildConfig
+import org.techtown.stagram.R
 import org.techtown.stagram.navigation.model.PushDTO
 
 class FcmPush {
 
     var JSON = MediaType.parse("application/json; charset=utf-8")
     var url = "https://fcm.googleapis.com/fcm/send"
-    var serverKey = BuildConfig.API_KEY // local.properties
+    var serverKey = ""
     var gson : Gson? = null
     var okHttpClient : OkHttpClient? = null
 
