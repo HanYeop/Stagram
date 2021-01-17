@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.item_comment.view.*
 import org.techtown.stagram.R
 import org.techtown.stagram.navigation.model.AlarmDTO
 import org.techtown.stagram.navigation.model.ContentDTO
+import org.techtown.stagram.navigation.util.FcmPush
 
 class CommentActivity : AppCompatActivity() {
     var contentUid : String? = null
@@ -55,6 +56,10 @@ class CommentActivity : AppCompatActivity() {
         alarmDTO.timestamp = System.currentTimeMillis()
         alarmDTO.message = message
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+        // 댓글 푸시 이벤트
+        var msg = FirebaseAuth.getInstance()?.currentUser?.email + " "+ getString(R.string.alarm_comment)+ " of " + message
+        FcmPush.instance.sendMessage(destinationUid,"Stagram",msg)
     }
 
     inner class CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){

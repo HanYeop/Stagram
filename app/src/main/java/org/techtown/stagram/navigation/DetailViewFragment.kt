@@ -23,6 +23,7 @@ import org.techtown.stagram.MainActivity
 import org.techtown.stagram.R
 import org.techtown.stagram.navigation.model.AlarmDTO
 import org.techtown.stagram.navigation.model.ContentDTO
+import org.techtown.stagram.navigation.util.FcmPush
 
 class DetailViewFragment : Fragment(){
     var firestore : FirebaseFirestore? = null
@@ -174,6 +175,10 @@ class DetailViewFragment : Fragment(){
             alarmDTO.kind = 0
             alarmDTO.timestamp = System.currentTimeMillis()
             FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+            // 좋아요 푸시 이벤트
+            var message = FirebaseAuth.getInstance()?.currentUser?.email + " "+ getString(R.string.alarm_favorite)
+            FcmPush.instance.sendMessage(destinationUid,"Stagram",message)
         }
     }
 }

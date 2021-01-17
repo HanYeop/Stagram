@@ -29,6 +29,7 @@ import org.techtown.stagram.LoginActivity
 import org.techtown.stagram.MainActivity
 import org.techtown.stagram.navigation.model.AlarmDTO
 import org.techtown.stagram.navigation.model.FollowDTO
+import org.techtown.stagram.navigation.util.FcmPush
 
 class UserFragment : Fragment(){
     var fragmentView : View? = null
@@ -144,6 +145,10 @@ class UserFragment : Fragment(){
         alarmDTO.kind = 2
         alarmDTO.timestamp = System.currentTimeMillis()
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+        // 팔로워 푸시 이벤트
+        var message = auth?.currentUser?.email + " "+getString(R.string.alarm_follow)
+        FcmPush.instance.sendMessage(destinationUid,"Stagram",message)
     }
 
     // 팔로우
