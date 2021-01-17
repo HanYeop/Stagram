@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         supportFragmentManager.beginTransaction().replace(R.id.main_content,detailViewFragment).commit()
 
         ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),1)
+        registerPushToken()
     }
 
     // 툴바 기본 이미지 설정
@@ -73,6 +75,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         toolbar_username.visibility = View.GONE
         toolbar_back_Button.visibility = View.GONE
         top_image.visibility = View.VISIBLE
+    }
+
+    // 푸시 토큰 생성
+    fun registerPushToken(){
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            task ->
+            val token = task.result?.token
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val map = mutableMapOf<String,Any>()
+            map["pushToken"] = token!!
+
+            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
+
+        }
     }
 
 
