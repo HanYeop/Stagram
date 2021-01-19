@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             map["pushToken"] = token!!
 
             FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
-
         }
     }
 

@@ -1,11 +1,9 @@
 package org.techtown.stagram.navigation.util
 
-import android.app.Application
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import okhttp3.*
 import org.techtown.stagram.BuildConfig
-import org.techtown.stagram.R
 import org.techtown.stagram.navigation.model.PushDTO
 import java.io.IOException
 
