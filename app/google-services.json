@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "767185056190-beluopjevma932df0obdltivkki5tqau.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.techtown.stagram",
+            "certificate_hash": "d1dfe4a2736b2c1fafe2bbf11993188493aa4324"
+          }
+        },
+        {
           "client_id": "767185056190-gdan46v1j5f1dln9gdfhauu9s9v4necv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
